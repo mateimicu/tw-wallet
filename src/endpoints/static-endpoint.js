@@ -6,7 +6,7 @@ import { Endpoint } from './endpoint.js'
 
 export class StaticEndpoint extends Endpoint {
 
-  async get(req, resp) {
+  async get(req, resp, _) {
     const staticFilePath = join('src/', req.url);
 
     console.log(`[INFO]: Serving static file ${req.url} using ${staticFilePath}`);

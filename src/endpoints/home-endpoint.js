@@ -5,7 +5,7 @@ import { Endpoint } from './endpoint.js'
 
 export class HomeEndpoint extends Endpoint {
 
-  async get(_, resp) {
+  async get(_, resp, __) {
     resp.writeHead(200);
     resp.end(await fsAsync.readFile('src/views/homepage.html', { encoding: "utf8" }))
   }
