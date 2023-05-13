@@ -50,6 +50,12 @@ export class Wallet extends Endpoint {
       resp.end(JSON.stringify({"error_code": 404, "error_message": `Can't find wallet with id ${id}`}));
     }
   }
+  async del(_, __, __) {
+    console.log(" DE IMPLEMENTA ");
+  }
+  async patch(_, __, __) {
+    console.log(" DE IMPLEMENTA ");
+  }
 }
 
 export class WalletIndex extends Endpoint {
@@ -134,6 +140,15 @@ export class Currency extends Endpoint {
     }
     resp.writeHead(200);
     resp.end(JSON.stringify(WALLET_DATA[id_wallet][id_currency]));
+  }
+  async del(_, __, ___) {
+    console.log("De Implementa");
+  }
+  async path(_, __, ___) {
+    console.log("De Implementa");
+  }
+  async put(_, __, ___) {
+    console.log("De Implementa");
   }
 }
 
