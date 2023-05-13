@@ -16,6 +16,8 @@ const ENDPOINTS = {
   "^/wallet/(?<wallet_id>[0-9a-zA-Z\-]+)/?$": new Wallet(),
   // /wallet/<wallet_id>/<currency>/
   "^/wallet/(?<wallet_id>[0-9a-zA-Z\-]+)/(?<currency_id>[0-9a-zA-Z\-]+)/?$": new Currency(),
+  // * Add open api spec route -> to serve the YAML
+  // * OPEN API UI served from a route.  You can use a library
   "": new NotFoundEndpoint(),
 }
 
