@@ -10,12 +10,14 @@ import { HomeEndpoint } from "./endpoints/HomeEndpoint";
 import { NotFoundEndpoint } from "./endpoints/NotFoundEndpoint";
 import { WalletEndpoint } from "./endpoints/WalletEndpoint";
 import { WalletsEndpoint } from "./endpoints/WalletsEndpoint";
+import { AuthEndpoint } from "./endpoints/AuthEndpoint";
 import { Request, RequestBodyHelper, Response } from "./utils/HttpUtils";
 import Logger from "./utils/Logger";
 
 const endpoints: Endpoint[] = [
   new HomeEndpoint("^/?$"),
-  new WalletsEndpoint("^/api/wallets/?$"),
+  new AuthEndpoint("^/login/?$"),
+  new WalletsEndpoint("^/api/wallets/?$", AuthStategy.JWT),
   new WalletEndpoint("^/api/wallets/(?<walletId>[0-9a-zA-Z-]+)/?$"),
   new CurrenciesEndpoint(
     "^/api/wallets/(?<walletId>[0-9a-zA-Z-]+)/currencies/?$"
@@ -96,6 +98,7 @@ const requestListener: RequestListener = async (
       params: match?.groups ?? {},
       body: body,
       url: request.url,
+      headers: request.headers,
     };
     Logger.debug(`Request body: ${JSON.stringify(controllerRequest)}`);
     const controllerResponse: Response = await endpoint[
