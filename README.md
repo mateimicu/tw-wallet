@@ -14,4 +14,4 @@ Extras:
 
 # Docs
 
-`curl -v -X POST http://127.0.0.1:8089/api/wallet/$(curl -X POST http://127.0.0.1:8089/api/wallet -d 'descriere=test' | jq '.walletId' -r)/XXX  -d '{"value": 10}'`
+`curl -v -X POST http://127.0.0.1:8089/api/wallets/$(curl -X POST http://127.0.0.1:8089/api/wallets -d '{"description": "test"}' | jq '.walletId' -r)/currencies  -d '{"value": 10, "ticker": "RON"}'`

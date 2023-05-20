@@ -1,4 +1,6 @@
 import { IncomingMessage, RequestListener, Server, ServerResponse } from "http";
+import { AuthStategy } from "./auth/AuthStategy";
+import { Authenticator } from "./auth/Authenticator";
 import config from "./config/config.defaults";
 import { CurrenciesEndpoint } from "./endpoints/CurrenciesEndpoint";
 import { CurrencyEndpoint } from "./endpoints/CurrencyEndpoint";
@@ -19,10 +21,27 @@ const endpoints: Endpoint[] = [
     "^/api/wallets/(?<walletId>[0-9a-zA-Z-]+)/currencies/?$"
   ),
   new CurrencyEndpoint(
-    "^/api/wallets/(?<walletId>[0-9a-zA-Z-]+)/currencies/(?<ticker>[0-9a-zA-Z-]+)/?$"
+    "^/api/wallets/(?<walletId>[0-9a-zA-Z-]+)/currencies/(?<ticker>[0-9a-zA-Z-]+)/?$",
+    AuthStategy.DENY
   ),
   new NotFoundEndpoint(".*"),
 ];
+
+const safeRequestListener: RequestListener = async (
+  request: IncomingMessage,
+  response: ServerResponse
+) => {
+  try {
+    requestListener(request, response);
+  } catch (error) {
+    Logger.error(
+      `Error while processing request: ${request.url}: ${request.method} - ${error}`
+    );
+
+    response.writeHead(500);
+    response.end("Internal server error");
+  }
+};
 
 const requestListener: RequestListener = async (
   request: IncomingMessage,
@@ -40,6 +59,21 @@ const requestListener: RequestListener = async (
       continue;
     }
 
+    if (!Authenticator.auth(endpoint.authStategy, request)) {
+      Logger.debug(
+        `Authentication failed for ${request.url} on the path ${endpoint.matchingExpression}`
+      );
+      response.writeHead(401);
+      response.end(
+        JSON.stringify({
+          error_code: ErrorCode.AUTHENTICATION_FAILED,
+          error_message: "Authentication failed",
+        })
+      );
+
+      return;
+    }
+
     let body: any;
 
     try {
@@ -48,36 +82,30 @@ const requestListener: RequestListener = async (
       Logger.error(`Error while parsing request body: ${error}`);
 
       response.writeHead(400);
-      response.end(ErrorCode.PAYLOAD_MALFORMED);
-
-      return;
-    }
-
-    try {
-      const controllerRequest: Request<any, any> = {
-        params: match?.groups ?? {},
-        body: body,
-        url: request.url,
-      };
-      Logger.debug(`Request body: ${JSON.stringify(controllerRequest)}`);
-      const controllerResponse: Response = await endpoint[
-        request.method.toLowerCase()
-      ](controllerRequest);
-
-      Logger.debug(`Response body: ${JSON.stringify(controllerResponse)}`);
-
-      response.writeHead(controllerResponse.statusCode);
-      response.end(controllerResponse.body);
-
-      return;
-    } catch (error) {
-      Logger.error(
-        `Error while processing request: ${request.url}: ${request.method} - ${error}`
+      response.end(
+        JSON.stringify({
+          error_code: ErrorCode.PAYLOAD_MALFORMED,
+          error_message: "JSON payload can not be parsed",
+        })
       );
 
-      response.writeHead(500);
-      response.end("Internal server error");
+      return;
     }
+
+    const controllerRequest: Request<any, any> = {
+      params: match?.groups ?? {},
+      body: body,
+      url: request.url,
+    };
+    Logger.debug(`Request body: ${JSON.stringify(controllerRequest)}`);
+    const controllerResponse: Response = await endpoint[
+      request.method.toLowerCase()
+    ](controllerRequest);
+
+    Logger.debug(`Response body: ${JSON.stringify(controllerResponse)}`);
+
+    response.writeHead(controllerResponse.statusCode);
+    response.end(controllerResponse.body);
 
     return;
   }
@@ -89,7 +117,7 @@ const requestListener: RequestListener = async (
 };
 
 const main = () => {
-  const server = new Server(requestListener);
+  const server = new Server(safeRequestListener);
 
   Logger.info(`Starting server at http://127.0.0.1:${config.port}`);
   server.listen(config.port);
