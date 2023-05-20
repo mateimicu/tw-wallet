@@ -1,9 +1,8 @@
-openapi: '3.0.0'
+openapi: "3.0.0"
 info:
   title: Wallet
-  version: '1.0.0'
+  version: "1.0.0"
   description: Wallet manager
-
 
 paths:
   /wallet:
@@ -17,19 +16,19 @@ paths:
         200:
           description: "Ok operation to list all wallets"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/wallet'
+                  $ref: "#/components/schemas/wallet"
         404:
           description: "The wallet was not found"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/error'
+                  $ref: "#/components/schemas/error"
 
     post:
       summary: "List all Wallets"
@@ -41,19 +40,19 @@ paths:
         200:
           description: "Ok operation to list all wallets"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/wallet'
+                  $ref: "#/components/schemas/wallet"
         404:
           description: "The wallet was not found"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/error'
+                  $ref: "#/components/schemas/error"
     delete:
       summary: "List all Wallets"
       parameters:
@@ -64,20 +63,19 @@ paths:
         200:
           description: "Ok operation to list all wallets"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/wallet'
+                  $ref: "#/components/schemas/wallet"
         404:
           description: "The wallet was not found"
           content:
-            application/json :
+            application/json:
               schema:
                 type: array
                 itmes:
-                  $ref: '#/components/schemas/error'
-
+                  $ref: "#/components/schemas/error"
 
 components:
   schemas:
@@ -95,10 +93,10 @@ components:
     wallet:
       type: object
       properties:
-        descriere:
+        description:
           type: string
           description: Wallet desc
-          example: "sunt o descriere"
+          example: "I'm a description"
         currency:
           type: integer
           example: [RON, EUR]
@@ -110,4 +108,3 @@ components:
           description: Wallet desc
         error_message:
           type: string
-

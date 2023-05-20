@@ -1,16 +1,22 @@
 {
-  "name": "autentificare",
-  "type": "module",
+  "name": "tw-wallet",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "run-dev": "npm run build && npm run start"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sqlite-async": "^1.2.0",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.1",
+    "@types/uuid": "^9.0.1",
+    "typescript": "^5.0.4"
   }
 }
