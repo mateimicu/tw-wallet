@@ -1,11 +1,12 @@
-import { IncomingMessage } from "http";
+import { IncomingMessage, IncomingHttpHeaders } from "http";
 
 export class Request<T1, T2> {
-  constructor(public params: T1, public body: T2, public url: string) {}
+  constructor(public params: T1, public body: T2, public url: string, public headers:
+    IncomingHttpHeaders) { }
 }
 
 export class Response {
-  constructor(public statusCode: number, public body: any) {}
+  constructor(public statusCode: number, public body: any) { }
 }
 
 export class RequestBodyHelper {
